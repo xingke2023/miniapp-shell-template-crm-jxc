@@ -406,7 +406,7 @@ Page({
     heroTagline: '', // 登录后在 header 显示的时段问候文案
     user: null,
     logging: false,
-    loginForm: { username: '', password: '' },
+    loginForm: { username: 'aaa1', password: 'uuuu8888' },
     isRegisterMode: false, // false=登录表单，true=注册表单（复用同一组输入框）
 
     mediaEnabled: false,

@@ -33,11 +33,11 @@ Page({
         }).then(function (freshToken) {
           var ssoToken = freshToken || cachedSsoToken;
           if (!ssoToken) {
-            wx.showToast({ title: '请先登录', icon: 'none' });
+            wx.showToast({ title: '请退出重新登录', icon: 'none' });
             setTimeout(function () { wx.navigateBack(); }, 600);
             return;
           }
-          // 认证中心生态内的外部服务约定用 accessToken= 这个参数名（不是本项目内部页面用的 token=）
+          // 认证中心生态内的外部服务约定用 accessToken= 这个参数名
           var sep = rawUrl.indexOf('?') === -1 ? '?' : '&';
           self.setData({ url: rawUrl + sep + 'accessToken=' + encodeURIComponent(ssoToken) });
         });

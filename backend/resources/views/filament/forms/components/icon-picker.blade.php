@@ -2,6 +2,7 @@
     @php
         $icons = $getIcons();
         $statePath = $getStatePath();
+        \Log::info('IconPicker rendered', ['statePath' => $statePath, 'iconsCount' => count($icons)]);
     @endphp
 
     <div
@@ -40,7 +41,13 @@
                         <span class="text-xs text-gray-700 dark:text-gray-200 truncate" x-text="getIconEntry(selected).label"></span>
                     </div>
                 </template>
-                <template x-if="!selected || !getIconEntry(selected)">
+                <template x-if="selected && !getIconEntry(selected)">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                        <span class="text-base shrink-0" x-text="selected"></span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 truncate">（emoji）</span>
+                    </div>
+                </template>
+                <template x-if="!selected">
                     <span class="text-xs text-gray-400">未选择图标</span>
                 </template>
             </div>

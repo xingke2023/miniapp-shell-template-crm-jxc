@@ -41,6 +41,11 @@ class QuickActionResource extends Resource
                     ->required()
                     ->maxLength(50),
 
+                Forms\Components\TextInput::make('emoji')
+                    ->label('图标 slug')
+                    ->helperText('heroicon 名称，如 chart-bar、bell、truck 等')
+                    ->maxLength(50),
+
                 Forms\Components\Select::make('action_type')
                     ->label('按钮类型')
                     ->options([

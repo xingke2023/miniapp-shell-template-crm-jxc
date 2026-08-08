@@ -17,14 +17,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 | Service | Port | DB | PM2 进程名 |
 |---------|------|-----|-----------|
-| Laravel API + Filament Admin | **8305** | **miniapptemplate** | `app-miniapp2-backend` |
+| Laravel API + Filament Admin | **8305** | **miniapptemplate** | `app-mini-template` |
 
-### PM2 管理（必须加 sudo -u mi）
+### PM2 管理
 ```bash
-sudo -u mi pm2 list
-sudo -u mi pm2 restart app-miniapp2-backend
-sudo -u mi pm2 logs app-miniapp2-backend --lines 50
-sudo -u mi pm2 save
+pm2 list
+pm2 restart app-mini-template
+pm2 logs app-mini-template --lines 50
+pm2 save
 ```
 
 ### 数据库连接
@@ -160,8 +160,8 @@ AiAssistantController::message()
 
 | 用途 | 环境变量 | 当前值 |
 |------|---------|-------|
-| 文字意图解析 | `AI_BASE_URL` / `AI_MODEL` | DeepSeek `deepseek-v4-flash` |
-| 图片识别 | `AI_VISION_BASE_URL` / `AI_VISION_MODEL` | 未配置 |
+| 文字意图解析 | `AI_BASE_URL` / `AI_MODEL` | Kimi `kimi-k3`（`api.moonshot.cn`） |
+| 图片识别 | `AI_VISION_BASE_URL` / `AI_VISION_MODEL` | Kimi `kimi-k3`（`api.moonshot.cn`） |
 | 语音转文字 | `AI_WHISPER_BASE_URL` / `AI_WHISPER_MODEL` | 未配置 |
 
 ⚠️ `max_tokens=3000` + 一次重试：flash 模型偶发返回截断 JSON，`extractJson()` 抠 JSON 后 `json_decode` 失败 → 自动重试一次，两次均失败才返回「没太理解」。

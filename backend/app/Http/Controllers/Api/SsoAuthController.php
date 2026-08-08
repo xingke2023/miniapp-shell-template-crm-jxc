@@ -161,6 +161,9 @@ class SsoAuthController extends Controller
         $username = isset($ssoUser['username']) && is_string($ssoUser['username']) ? $ssoUser['username'] : null;
 
         $user = $email ? User::where('email', $email)->first() : null;
+        if (! $user && $username) {
+            $user = User::where('username', $username)->first();
+        }
 
         if (! $user) {
             $user = User::create([

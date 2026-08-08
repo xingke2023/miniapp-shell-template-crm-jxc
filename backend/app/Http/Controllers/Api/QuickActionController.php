@@ -42,7 +42,7 @@ class QuickActionController extends Controller
             ->get();
 
         // 首页按钮固定在第一位，不由数据库控制
-        $homeNode = ['key' => 'home', 'emoji' => '🏠', 'label' => '首页', 'badge' => ''];
+        $homeNode = ['key' => 'home', 'emoji' => 'home', 'label' => '首页', 'badge' => ''];
         $data = array_merge([$homeNode], $actions->map(fn (QuickAction $a) => $a->toClientArray())->all());
 
         // 聊天区蓝色胶囊：收集所有 menu 类型按钮下 show_in_chat=true 的子项

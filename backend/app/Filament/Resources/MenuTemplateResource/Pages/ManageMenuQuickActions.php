@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MenuTemplateResource\Pages;
 
+use App\Filament\Forms\Components\IconPickerField;
 use App\Filament\Resources\MenuTemplateResource;
 use App\Filament\Resources\QuickActionResource;
 use App\Models\QuickAction;
@@ -61,6 +62,9 @@ class ManageMenuQuickActions extends ManageRelatedRecords
                     ->label('按钮文字')
                     ->required()
                     ->maxLength(50),
+
+                IconPickerField::make('emoji')
+                    ->label('图标'),
 
                 Forms\Components\Select::make('action_type')
                     ->label('按钮类型')

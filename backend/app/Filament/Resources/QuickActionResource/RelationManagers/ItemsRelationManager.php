@@ -120,16 +120,15 @@ class ItemsRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('emoji')
                     ->label('图标')
-                    ->html()
-                    ->formatStateUsing(function (?string $state): string {
+                    ->formatStateUsing(function (?string $state): \Illuminate\Support\HtmlString {
                         if (!$state) {
-                            return '<span class="text-gray-400">—</span>';
+                            return new \Illuminate\Support\HtmlString('<span class="text-gray-400">—</span>');
                         }
                         if (preg_match('/^[a-z0-9-]+$/', $state)) {
-                            return svg('heroicon-o-' . $state, ['class' => 'w-5 h-5 inline-block text-gray-600 dark:text-gray-300'])->toHtml();
+                            return new \Illuminate\Support\HtmlString(svg('heroicon-o-' . $state, ['class' => 'w-5 h-5 inline-block text-gray-600 dark:text-gray-300'])->toHtml());
                         }
 
-                        return e($state);
+                        return new \Illuminate\Support\HtmlString(e($state));
                     }),
                 Tables\Columns\TextColumn::make('label')->label('标题'),
                 Tables\Columns\TextColumn::make('desc')->label('说明')->placeholder('—'),
