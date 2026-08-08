@@ -87,7 +87,11 @@ class AiAssistantController extends Controller
         );
 
         $settingsOverride = $this->resolveTemplateSettings($request);
-        $parsed           = $this->aiService->parseInventoryIntent($text, $imageBase64, $knowledgeContext, $settingsOverride);
+        $requestHistory   = $request->input('history');
+        $historyMessages  = is_array($requestHistory) && count($requestHistory) > 0
+            ? array_slice($requestHistory, -6)
+            : $this->getRecentHistory($session->id, 3);
+        $parsed           = $this->aiService->parseInventoryIntent($text, $imageBase64, $knowledgeContext, $settingsOverride, $historyMessages);
         $processingMs     = (int) ((microtime(true) - $startTime) * 1000);
 
         $intent = $parsed['intent'] ?? 'other';
@@ -1123,9 +1127,8 @@ class AiAssistantController extends Controller
         if (empty($reply)) {
             return '没有收到建议内容，请重新描述您的问题。';
         }
-        AssistantNote::create(['type' => 'ai_suggestion', 'content' => $reply]);
 
-        return $reply."\n\n💡 已保存到个人助理 · AI建议";
+        return $reply;
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -1162,6 +1165,27 @@ class AiAssistantController extends Controller
             'status'     => 1,
             'started_at' => now(),
         ]);
+    }
+
+    /**
+     * @return array<int,array{role:string,content:string}>
+     */
+    private function getRecentHistory(int $sessionId, int $rounds = 3): array
+    {
+        $messages = AiMessage::where('session_id', $sessionId)
+            ->whereIn('role', [1, 2])
+            ->orderBy('id', 'desc')
+            ->limit($rounds * 2)
+            ->get()
+            ->reverse()
+            ->values();
+
+        return $messages->map(function (AiMessage $msg): array {
+            return [
+                'role'    => $msg->role === 1 ? 'user' : 'assistant',
+                'content' => $msg->role === 1 ? (string) ($msg->raw_content ?? '') : (string) ($msg->ai_response ?? ''),
+            ];
+        })->filter(fn (array $m): bool => $m['content'] !== '')->values()->all();
     }
 
     private function resolveTemplateSettings(Request $request): array

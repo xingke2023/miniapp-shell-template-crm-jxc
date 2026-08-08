@@ -48,10 +48,15 @@ class AiService
      *
      * @param  array<string,mixed>  $settingsOverride  模板专属设置（覆盖全局 AppSetting）
      */
-    public function parseInventoryIntent(string $text, ?string $imageBase64 = null, string $knowledgeContext = '', array $settingsOverride = []): array
+    public function parseInventoryIntent(string $text, ?string $imageBase64 = null, string $knowledgeContext = '', array $settingsOverride = [], array $historyMessages = []): array
     {
         $systemPrompt = <<<'PROMPT'
-你是「进销存及CRM」系统的AI助手，帮用户用自然语言操作系统。
+你是「保险百科」智能助手，同时具备保险业 CRM 客户管理能力。
+
+核心职责：
+1. **保险百科**：解答保险产品、条款、理赔、保障规划、客户心理、客户常见顾虑、销售话术、展业技巧等问题。回答保险类问题时，reply 字段务必详细、专业、有温度，不限字数。
+2. **CRM 操作**：帮用户用自然语言管理客户、线索、商机、跟进记录、联系人。
+3. **进销存操作**：管理商品、进货、销售、库存。
 
 识别意图后，严格只返回 JSON，不加任何解释文字。所有未提及字段填 null。
 
@@ -120,6 +125,7 @@ class AiService
 - reply 用友好口吻，如"好的，正在为您录入…"
 - activity 中若含非标准日期（"周五"/"明天"/"下午3点"）则 scheduled_at 填 null，不要填无效字符串
 - 用户说"给我建议"、"有什么好方法"、"怎么做"、"给点建议"、"帮我分析"→ ai_suggestion；reply 填完整建议内容（不限字数）
+- 保险百科类问题（如：保险产品介绍、条款解读、理赔流程、保障规划、客户心理、客户顾虑、拒绝处理、销售话术、展业技巧、保险知识科普等）→ ai_suggestion；reply 必须详细专业，针对性强，不限字数
 - 用户说"帮我记一下"、"记录一下"、"备忘"、"记下来"、"写个便签"、"记条便签"→ assistant_note，type 填 "note"，content 填要记录的内容原文
 - 用户说"记个计划"、"加个计划"、"写个计划"、"待办"、"todo"→ assistant_note，type 填 "plan"，content 填计划内容
 - assistant_note 的 content 必须提取用户实际要记录的内容（去掉"帮我记一下"等前缀），若内容为空则 reply 询问"请告诉我要记录什么内容？"
@@ -144,6 +150,10 @@ PROMPT;
         }
 
         $messages = [['role' => 'system', 'content' => $systemPrompt]];
+
+        foreach ($historyMessages as $histMsg) {
+            $messages[] = $histMsg;
+        }
 
         if ($imageBase64) {
             $messages[] = [

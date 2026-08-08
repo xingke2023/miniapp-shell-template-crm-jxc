@@ -1239,7 +1239,7 @@ Page({
         history.push({ role: m.from === 'user' ? 'user' : 'assistant', content: m.text || '' });
       }
     }
-    history = history.slice(-10);
+    history = history.slice(-6);
 
     self._pushUser(text);
     self.setData({ chatInput: '', aiBusy: true, typing: true });
